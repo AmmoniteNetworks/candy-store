@@ -1,0 +1,104 @@
+.top {
+  height: 50px;
+  margin-bottom: 0;
+  padding-top: #{$standard-gap / 6 * 2};
+  padding-bottom: #{$standard-gap / 6 * 2};
+  font-family: $prime-font;
+  color: white;
+  background-color: $prime-color;
+
+  @include phone {
+    height: 38px;
+    padding-top: #{$standard-gap / 6};
+    padding-bottom: #{$standard-gap / 6}
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .phone-number {
+    font-size: 1.1em;
+
+    a {
+      color: white;
+
+      &:hover, &:focus, &:visited {
+        color: white;
+      }
+    }
+
+    @include desktop {
+      font-size: 1em;
+    }
+
+    @include phone {
+      font-size: 0.9em;
+    }
+  }
+
+  nav {
+    ul {
+      li {
+        margin-right: $standard-gap;
+        font-size: 1em;
+        line-height: 1.8;
+        a {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .top-right {
+    text-align: right;
+  }
+
+  .bootstrap-select {
+    width: 100px !important;
+  }
+
+  .dropdown-toggle {
+    padding: 0 5px;
+    font-size: 1em;
+    color: white;
+    background: transparent;
+    border: 0;
+  }
+
+  .vat-toggle {
+    display: inline-block;
+    margin-left: calc(#{$standard-gap} / 2);
+    font-size: 0.9em;
+
+    @include phone {
+      font-size: 0.7em;
+      line-height: 1;
+    }
+
+    span, label {
+      display: inline-block;
+      vertical-align: middle;
+
+      &.vat {
+        @include phone {
+          display: block;
+        }
+      }
+    }
+
+    label {
+      margin-left: calc(#{$standard-gap} / 3);
+      margin-right: calc(#{$standard-gap} / 3);
+    }
+  }
+
+  .wave {
+    position: absolute;
+    left: 0;
+
+    @include phone {
+      margin-top: 0 !important;
+    }
+  }
+}
