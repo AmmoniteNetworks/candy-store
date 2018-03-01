@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use GetCandy\Api\Traits\HasCandy;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasCandy;
 
     /**
      * The attributes that are mass assignable.
