@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-4">
                             <div class="product-price">
-                                <div class="numeric numeric-lg">{{ product.price | currency }}</div>
+                                <div class="numeric numeric-lg">{{ linePrice | currency }}</div>
                                 <span class="vat">{{ vatLabel }}<br>VAT</span>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                     }
                 }, 1000);
             });
-            
+
         },
         computed: {
             product() {
@@ -71,6 +71,19 @@
             },
             vatLabel() {
                 return this.$store.getters.vatLabel;
+            },
+            linePrice() {
+                let tiers = this.product.variant.tiers;
+                if (tiers && tiers.data.length) {
+                    let prices = _.filter(tiers, tier => {
+                        return this.product.quantity >= tier.lower_limit;
+                    });
+                    prices = _.orderBy(prices, 'lower_limit', 'desc');
+                    if (prices[0]) {
+                        return prices[0].price;
+                    }
+                }
+                return this.product.variant.price;
             }
         },
         methods: {
@@ -82,7 +95,7 @@
                 if (_.has(product, 'thumbnail')){
                     return Candy.thumbnail(_.get(product, 'thumbnail'));
                 }
-                
+
             }
         }
     }

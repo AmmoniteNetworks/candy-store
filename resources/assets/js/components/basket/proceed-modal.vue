@@ -6,8 +6,10 @@
                 <div role="tabpanel" :class="{'tab-pane':true, 'active':!showLogin}" v-show="!showLogin">
                     <a class="proceed-checkout-close" @click="showModal = false"><span aria-hidden="true">&times;</span></a>
                     <div class="modal-body checkout">
-                        <p class="modal_call-out">New customer?</p>
-                        <a href="/checkout" class="btn btn-green">Continue to Checkout</a>
+                        <div class="proceed-checkout-bk">
+                            <p class="modal_call-out">New customer?</p>
+                            <a href="/checkout" class="btn btn-green">Continue to Checkout</a>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <small>Do you already have an account?</small>

@@ -11,7 +11,6 @@ import store from './modules/store'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    
     modules: {
         store,
         basket,
@@ -20,5 +19,4 @@ export default new Vuex.Store({
         product,
         search
     }
-    
 });

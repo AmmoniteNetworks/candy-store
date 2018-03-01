@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use GetCandyClientClient;
+use App\Api\Search\Services\SearchService;
+
+use GetCandyClient;
 use App\Http\Requests\SearchRequest;
 
 class SearchController extends Controller
 {
-    public function __construct()
+    protected $search;
+
+    public function __construct(SearchService $search)
     {
         parent::__construct();
+
+        $this->search = $search;
     }
 
     public function index(SearchRequest $request)
@@ -21,42 +27,19 @@ class SearchController extends Controller
             ->with('display', $request->display);
     }
 
-    public function search(SearchRequest $request)
+    public function search(SearchRequest $request, $slug = null)
     {
-
         $params = [];
-        // Keywords
-        if ($request->has('keywords')) {
-            $params['keywords'] = $request->keywords;
-        }
 
-        // Apply Filters
-        if ( $request->has('filters') ) {
-            foreach ($request->filters as $appliedFilter) {
-                $params['filters']['categories']['values'][] = $appliedFilter['value'];
-            }
-        }
-
-        // Apply SortBy
-        if ($request->has('sortBy')) {
+        // Set SortBy
+        if ($request->has('sortBy') && $request->get('sortBy') !== null) {
             $sortBy = explode("-", $request->sortBy);
             $params['sort_by'][$sortBy[0]] = $sortBy[1];
         }
 
-        // Apply Pagination
-        if ( $request->has('pagination.per_page') ) {
-            $params['per_page'] = (int) $request->pagination['per_page'];
-        }
-        if( $request->has('pagination.current_page') ) {
-            $params['page'] = (int) $request->pagination['current_page'];
-        }
-
-        $params['includes'] = "routes,first_variant";
-        $params['type'] = "product";
-        $params['currency'] = $this->currency['code'];
-
         try {
-            $results = GetCandyClient::Products($params)->search();
+            $results = $this->search->get($request->get('keywords'), $request->get('filters'), $request->get('pagination'), 'product', $params);
+
         } catch(\Exception $e) {
             echo $e->getMessage();exit;
             return abort(404);

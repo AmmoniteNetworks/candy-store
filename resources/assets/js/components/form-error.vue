@@ -1,4 +1,4 @@
-s<template>
+<template>
     <div>
 
         <span class="error" v-for="(error,index) in errors" :key="index">{{ error }}</span>

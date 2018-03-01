@@ -23,7 +23,7 @@ abstract class BaseService
         if (Session::has('language')) {
             $this->language = Session::get('language');
         } else {
-            $this->language = env('APP_LANGUAGE', 'fr');
+            $this->language = env('APP_LANGUAGE', 'en');
         }
     }
 

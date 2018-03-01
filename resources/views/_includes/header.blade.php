@@ -61,7 +61,7 @@
                             <i class="fa fa-user store-icon" aria-hidden="true"></i>
                         </div>
 
-                        <div class="store-txt">
+                        <div class="store-3txt">
                             <p class="store-title">Account <i class="fa fa-caret-down" aria-hidden="true"></i></p>
                         </div>
 

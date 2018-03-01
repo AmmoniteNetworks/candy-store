@@ -82,14 +82,14 @@ const getters = {
         return state.loading;
     },
     searchResultsTotal(state) {
-        var total = 0;
+        var total = 0
         if (_.has(state.results, 'meta.pagination.total')) {
             total = state.results.meta.pagination.total;
         }
         return total;
     },
     searchHasSuggestions(state) {
-        if (_.has(state.results, 'meta.suggestions') && state.results.meta.suggestions.length > 0) {
+        if (_.has(state.results, 'meta') && _.isArray(state.results.meta.suggestions)) {
             return true;
         }
         return false;

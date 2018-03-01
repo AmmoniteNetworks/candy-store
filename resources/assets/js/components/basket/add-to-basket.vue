@@ -6,12 +6,19 @@
                 <input min="1" max="99" type="number" class="form-control" v-model="storedProduct.quantity">
             </div>
             <div class="product-price">
-                <div class="numeric numeric-lg">{{ storedProduct.variant.price | currency }}</div>
-                <span class="vat">{{ vatLabel }}.<br>VAT</span>
+                <div class="numeric numeric-lg" v-if="!tiers.length">{{ storedProduct.variant.price |currency }}</div>
+                <span class="vat" v-if="!tiers.length"> {{ vatLabel }}.<br>VAT</span>
+                <template v-if="tiers.length">
+                    <a v-if="productHasInventory" href="javascript:void(0)" class="btn btn-green add-to-basket_summary" @click="addToBasket">Add to Basket</a>
+                    <a v-if="!productHasInventory" href="javascript:void(0)" class="btn btn-grey add-to-basket_summary" disabled>Out of Stock</a>
+                </template>
             </div>
+            <template v-if="!tiers.length">
+                <a v-if="productHasInventory" href="javascript:void(0)" class="btn btn-green add-to-basket_summary" @click="addToBasket">Add to Basket</a>
+                <a v-if="!productHasInventory" href="javascript:void(0)" class="btn btn-grey add-to-basket_summary" disabled>Out of Stock</a>
+            </template>
         </div>
-        <a v-if="productHasInventory" href="javascript:void(0)" class="btn btn-green add-to-basket_summary" @click="addToBasket">Add to Basket</a>
-        <a v-if="!productHasInventory" href="javascript:void(0)" class="btn btn-grey add-to-basket_summary" disabled>Out of Stock</a>
+
     </div>
 </template>
 
@@ -34,6 +41,9 @@
         computed: {
             storedProduct() {
                 return this.$store.state.product;
+            },
+            tiers() {
+                return this.storedProduct.variant.tiers.data;
             },
             vatLabel() {
                 return this.$store.getters.vatLabel;

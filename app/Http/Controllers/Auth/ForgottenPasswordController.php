@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ForgottenPasswordRequest;
-use GetCandyClientClient;
+use GetCandyClient;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPassword;

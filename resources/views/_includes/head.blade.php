@@ -18,7 +18,7 @@
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
 {{-- Head Scripts --}}
-<script src="https://use.fontawesome.com/3935715d26.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 @section('headscript')
 @show
 

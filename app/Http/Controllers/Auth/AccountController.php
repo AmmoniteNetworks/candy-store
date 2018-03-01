@@ -10,7 +10,7 @@ use App\Api\Orders\Services\OrderService;
 
 use Session;
 use Auth;
-use GetCandyClientClient;
+use GetCandyClient;
 
 class AccountController extends Controller
 {

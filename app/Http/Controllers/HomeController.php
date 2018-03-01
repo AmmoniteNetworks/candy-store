@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use GetCandyClientClient;
+use GetCandyClient;
 use Session;
 use App\Http\Requests\Request;
 

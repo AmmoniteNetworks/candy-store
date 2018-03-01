@@ -11,7 +11,6 @@
         </div>
 
         <div v-show="panel.status != 'collapse'">
-       
             <!--This information is displayed once the contact details stage has  been saved.-->
             <transition name="fade-in">
                 <div class="contact-details" v-show="panel.status == 'view'">
@@ -70,6 +69,14 @@
             prefill: {
                 type: Object,
                 default: {}
+            },
+            email: {
+                type: String,
+                default: null
+            },
+            tel: {
+                type: String,
+                default: null
             }
         },
         data() {
@@ -79,9 +86,14 @@
         },
         created() {
             var prefillData = {
-                'email': this.prefill['contact_email'],
-                'phone': this.prefill['contact_phone']
+                'email': this.prefill['contact_email'] ? this.prefill['contact_email'] : this.email,
+                'phone': this.prefill['contact_phone'] ? this.prefill['contact_phone'] : this.tel
             }
+
+            if (prefillData.email && prefillData.phone) {
+                this.submitForm();
+            }
+
             this.$store.dispatch('orderPrefill', {'panel': 'contactDetails', 'data': prefillData});
         },
         computed: {

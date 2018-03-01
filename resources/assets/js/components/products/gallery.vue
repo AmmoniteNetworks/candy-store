@@ -1,19 +1,21 @@
 <template>
     <div class="product-gallery">
         <div class="item featured">
-             <a :href="current.url" v-if="current.kind == 'image'" data-lity>
-               <img :src="current.thumbnail"/>
+             <a v-if="current.kind == 'image'" :href="current.url" data-lity>
+               <img :src="current.thumbnail" />
             </a>
-            <iframe :src="youtubeEmbed(current.url)" width="100%" height="400" frameborder="0" allowfullscreen v-if="current.kind == 'youtube'"></iframe>
+            <iframe v-if="current.kind == 'youtube'" :src="youtubeEmbed(current.url)" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+            <iframe v-if="current.kind == 'vimeo'" :src="vimeoEmbed(current.url)" width="100%" height="340" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
         </div>
         <div class="item" v-for="asset in getAssets()" :key="asset.id" @click="selected = asset">
             <img :src="getTransform(asset, 'thumbnail')" />
+            <img class="video-play" src="/images/video-play.png" v-if="asset.kind == 'vimeo'" />
             <img class="video-play" src="/images/video-play.png" v-if="asset.kind == 'youtube'" />
         </div>
     </div>
     <!-- <div class="product-gallery">
         <div class="item featured">
-           
+
         </div>
         <div class="item" v-for="asset in getAssets()" :key="asset.id" @click="setFeatured(asset)">
             <img :src="getTransform(asset, 'thumbnail')" />
@@ -61,11 +63,12 @@
                 this.featured = asset;
             },
             getAssets() {
+                /* Hides variant Images
                 if (this.product.variant_count > 1) {
                     return _.filter(this.product.assets.data, function (item) {
                         return item.kind != 'image';
                     });
-                }
+                }*/
                 return this.product.assets.data;
             },
             getThumbnail() {
@@ -87,6 +90,9 @@
             },
             youtubeEmbed(url) {
                 return url.replace("watch?v=", "embed/");
+            },
+            vimeoEmbed(url) {
+                return url.replace("https://vimeo.com/", "https://player.vimeo.com/video/");
             }
         }
     }

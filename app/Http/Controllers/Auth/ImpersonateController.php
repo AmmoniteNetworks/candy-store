@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Api\Auth\Services\UserService;
 
-use GetCandyClientClient;
+use GetCandyClient;
 use Session;
 
 class ImpersonateController extends Controller

@@ -4,6 +4,7 @@
         <div class="element aside filter-options">
             <div class="title">Filters - {{ appliedFiltersCount }} applied <button type="button" class="btn btn-text" @click="clearAppliedFilters">Clear All</button></div>
 
+
             <div class="filter-list">
                 <div v-for="(filter, filterName) in filters" :key="filterName">
 

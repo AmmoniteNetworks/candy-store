@@ -146,7 +146,7 @@
                         'currency': {'data': {'format': '&#xa3;{price}'}}
                     });
                     this.$store.commit('setOrderTotal', response.data['order']['total']);
-                    this.$store.commit('setOrderTax', response.data['order']['tax']);
+                    this.$store.commit('setOrderTax', response.data['order']['vat']);
                     this.$store.commit('setPanelStatus', {'key':'deliveryMethods', 'value':'view'});
                     this.$store.dispatch('contactDetailsShowOrNext');
                 })

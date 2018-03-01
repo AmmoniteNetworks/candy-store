@@ -63,11 +63,11 @@ const actions = {
     getBasket ({ commit, state }) {
         var basket = axios.get('/basket/get')
             .then(response => {
-                if(response.data && response.data['lines']){
-                    commit('setLines', response.data['lines']);
-                    commit('setDiscounts', response.data['discount']);
-                    commit('setTaxTotal', response.data['tax_total']);
-                    commit('setTotal', response.data['total']);
+                if (response.data && response.data.lines){
+                    commit('setLines', response.data.lines);
+                    commit('setDiscounts', response.data.discount);
+                    commit('setTaxTotal', response.data.tax_total);
+                    commit('setTotal', response.data.total);
                 }
             });
     },
@@ -77,19 +77,21 @@ const actions = {
         const productLine = Candy.altFind(state.lines, line => {
             return line.variant.id == product.variant.id;
         });
-        //const productLine = state.lines.find(line => line.variant.id === product.variant.id);
 
         if (!productLine) { // Add new product to basket
             commit('addLine', product);
-        } else { // Update exisiting product quantity
+        } else { // Update existing product quantity
             commit('updateLine', product);
         }
 
         // Update basket
         return dispatch('updateBasket');
-
     },
     updateBasket({ commit, state }) {
+
+        state.lines = _.filter(state.lines, item => {
+            return item.quantity > 0;
+        });
 
         return new Promise((resolve, reject) => {
             axios({
@@ -99,7 +101,8 @@ const actions = {
                 responseType: 'json'
             })
             .then(response => {
-                commit('setTaxTotal', response.data.data['tax_total']);
+                commit('setTotal', response.data.data.total);
+                commit('setTaxTotal', response.data.data.tax_total);
                 resolve(response);
             })
             .catch(error => {
@@ -109,14 +112,12 @@ const actions = {
 
     },
     emptyBasket({ commit, dispatch, state }) {
-
         state.lines = [];
         state.discount = [];
         state.total = 0;
         state.tax_total = 0;
 
         return dispatch('updateBasket');
-
     },
     applyDiscount ({ commit, state }, discountCode) {
 
@@ -128,9 +129,9 @@ const actions = {
                 responseType: 'json'
             })
             .then(response => {
-                commit('setDiscounts', response.data.data['discounts']);
-                commit('setTaxTotal', response.data.data['tax_total']);
-                commit('setTotal', response.data.data['total']);
+                commit('setDiscounts', response.data.data.discounts);
+                commit('setTaxTotal', response.data.data.tax_total);
+                commit('setTotal', response.data.data.total);
                 resolve(response);
             })
             .catch(error => {
@@ -149,9 +150,9 @@ const actions = {
                 responseType: 'json'
             })
             .then(response => {
-                commit('setDiscounts', response.data.data['discounts']);
-                commit('setTaxTotal', response.data.data['tax_total']);
-                commit('setTotal', response.data.data['total']);
+                commit('setDiscounts', response.data.data.discounts);
+                commit('setTaxTotal', response.data.data.tax_total);
+                commit('setTotal', response.data.data.total);
                 resolve(response);
             })
             .catch(error => {

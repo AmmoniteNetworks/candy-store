@@ -92,12 +92,11 @@
                             <label>Country</label>
                             <span class="custom-select full-width">
                                 <select class="form-control custom-dropdown" v-model="deliveryAddress.country" required>
-                                    <optgroup label="Popular Countries">
-                                        <option value="United Kingdom">United Kingdom</option>
-                                        <option value="France">France</option>
+                                    <optgroup label="Popular Countries" value="Popular Countries">
+                                        <option :value="country" v-for="country in popularCountries">{{ country }}</option>
                                     </optgroup>
-                                    <optgroup :label="region.region" v-for="region in regions" :key="region.region" v-if="region.region == 'Europe'">
-                                        <option :value="country.name.en" v-for="country in region.countries.data" :key="country.id">
+                                    <optgroup :label="region.region" v-for="region in regions" :key="region.region" v-if="region.region == 'Europe'" value="Europe">
+                                        <option :value="country.name.en" v-for="country in countries(region)" :key="country.id">
                                             {{ country.name.en }}
                                         </option>
                                     </optgroup>
@@ -138,12 +137,16 @@
         },
         data() {
             return {
-                errors: {}
+                errors: {},
+                popularCountries: [
+                    'United Kingdom',
+                    'France'
+                ]
             }
         },
         created() {
             this.$store.dispatch('orderPrefill', {'panel': 'deliveryAddress', 'data': this.prefill['shipping']});
-            
+
             if (this.$store.getters.deliveryAddressComplete) {
                 this.$store.commit('setPanelStatus', {'key' : 'deliveryAddress', 'value': 'view'});
                 this.$store.dispatch('deliveryMethodsShowOrNext');
@@ -169,6 +172,11 @@
             }
         },
         methods: {
+            countries(region) {
+                return _.filter(region.countries.data, item => {
+                    return !(this.popularCountries.indexOf(item.name.en) >= 0);
+                });
+            },
             setPanelStatus(value) {
                 this.$store.commit('setPanelStatus', {'key':'deliveryAddress', 'value':value});
             },

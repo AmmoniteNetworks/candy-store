@@ -63,7 +63,7 @@
                 </div>
 
                 {{-- Product List--}}
-                <search-listings keywords="{!! $searchTerm !!}"></search-listings>
+                <search-listings keywords="{!! $searchTerm !!}" ></search-listings>
                 {{-- End Product List --}}
 
                 <div class="row">

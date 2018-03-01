@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form @submit.prevent="submitForm" v-if="basketCount > 0">
+        <form @submit.prevent="submitForm" v-if="basket.lines.length">
             <div class="form-group">
                 <div class="input-group">
                     <input type="text" class="form-control form-control-sm" @keyup="reset" placeholder="Enter Promotional Code" v-model="discountCode">
@@ -27,6 +27,9 @@
         computed: {
             basketCount() {
                 return this.$store.getters.basketCount;
+            },
+            basket() {
+                return this.$store.state.basket;
             }
         },
         methods: {
@@ -39,6 +42,7 @@
                     .catch(error => {
                         this.errors = error.response.data.errors;
                     });
+                this.discountCode = '';
             }
         }
     }

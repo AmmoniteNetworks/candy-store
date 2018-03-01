@@ -90,7 +90,7 @@ $(function() {
         }
     });
 
-    /* getcandy Promotion Box Heights */
+    /* Promotion Box Heights */
     $('.promo-area.table-layout').each(function(){
         // Cache the highest
         var highestBox = 0;
@@ -151,5 +151,3 @@ function checkSize(){
         });
     }
 }
-
-

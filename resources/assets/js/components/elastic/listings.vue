@@ -32,7 +32,7 @@
         </div>
 
         <div class="loading" v-show="loading">
-            <span><i class="fa fa-refresh fa-spin fa-3x fa-fw"></i></span> <strong>Loading</strong>
+            <span><i class="fas fa-spinner fa-spin fa-3x fa-fw"></i></span> <strong>Loading</strong>
         </div>
 
         <div class="no-results" v-if="!loading && !hasResults && !staticListings">
@@ -80,22 +80,10 @@
             },
             staticMeta: {
                 type: Object,
-                default: () => {}
+                default: {}
             }
         },
         created() {
-
-            // Try to get defaults from querystring...
-            /* Removed as broke Internet Explorer
-            var urlParams = new URLSearchParams(window.location.search);
-
-            if (urlParams.has('page')) {
-                this.page = urlParams.get('page');
-            }
-
-            if (urlParams.has('display')) {
-                this.display = urlParams.get('display');
-            }*/
 
             if(!_.isEmpty(this.page)) {
                 this.$store.commit('setCurrentPage', this.page);
@@ -121,7 +109,7 @@
                 this.$store.commit('setPagination', this.staticMeta);
                 this.$store.commit('setFilters', this.staticMeta);
             }
-            
+
         },
         computed: {
             results() {

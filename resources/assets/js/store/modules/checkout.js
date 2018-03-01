@@ -1,6 +1,7 @@
 
 const state = {
     deliveryMethods: {},
+    paymentTypes: {},
     panel: {
         'deliveryAddress': {
             'status': 'edit'
@@ -24,6 +25,9 @@ const mutations = {
     setDeliveryMethods(state, deliveryMethods) {
         state.deliveryMethods = deliveryMethods;
     },
+    setPaymentTypes(state, paymentTypes) {
+        state.paymentTypes = paymentTypes;
+    },
     setPanelStatus(state , params) {
         CandyEvent.$nextTick(function () {
             state.panel[params.key]['status'] = params.value;
@@ -32,6 +36,12 @@ const mutations = {
 }
 
 const actions = {
+    getPaymentTypes({ commit, state }) {
+        var types = axios.get('/checkout/payment-types')
+            .then(response => {
+                commit('setPaymentTypes', response.data);
+            });
+    },
     deliveryMethodsShowOrNext ({ commit, getters, dispatch }) {
         if (getters.deliveryMethodComplete) {
             commit('setPanelStatus', {'key': 'deliveryMethods', 'value': 'view'});

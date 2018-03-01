@@ -192,12 +192,25 @@ const actions = {
             });
         });
     },
-    postPaymentDetails ({ commit, dispatch, state }, paymentToken) {
+    postPaymentDetails ({ commit, dispatch, state }, params) {
+
+        let data = {
+            'notes': state.notes
+        };
+
+        if (params.token) {
+            data.payment_token = params.token;
+        }
+
+        if (params.type) {
+            data.payment_type_id = params.type;
+        }
+
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
                 url: '/checkout/process',
-                data: {'payment_token': paymentToken, 'notes': state.notes}
+                data: data
             })
             .then(response => {
                 resolve(response);

@@ -17,8 +17,13 @@
         @include('_includes.footer')
 
     </div>
-        <script src="https://use.fontawesome.com/2633bba861.js"></script>
-        <script src="{{ mix('/js/app.js') }}"></script>
+
+        <!-- Script for polyfilling Promises on IE9/10/11 -->
+        <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
+
+        <script src="{{ mix('js/app.js') }}"></script>
+        <script src="/js/fresco.js"></script>
+        <script src="/js/bootstrap-select.js"></script>
 
     @section('bodyscript')
     @show

@@ -3,7 +3,7 @@
     <div>
         <div class="input-group">
 
-            <input name="search" @keyup.enter="Search" v-model="keywords" class="form-control search-control" placeholder="Search our sweets!" />
+            <input name="search" @keyup.enter="Search" v-model="keywords" class="form-control search-control" placeholder="Search product by name or reference..." />
             <span class="input-group-btn">
                 <button class="btn btn-green" type="button" @click="Search"><i class="fa fa-search" aria-hidden="true"></i></button>
             </span>
@@ -15,9 +15,10 @@
             <ul>
                 <li v-for="result in results" :key="result.objectID"><a :href="'/product/'+result.slug" title="">{{ candyAttribute(result, 'name') }}</a></li>
             </ul>
+
         </div>
     </div>
-    
+
 </template>
 
 <script>

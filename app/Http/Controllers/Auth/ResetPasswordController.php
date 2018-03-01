@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ResetPasswordRequest;
-use GetCandyClientClient;
+use GetCandyClient;
 
 class ResetPasswordController extends Controller
 {

@@ -42,7 +42,7 @@
 
             <div class="col-xs-12 col-sm-8 col-md-9">
 
-                {{-- Category List--}}
+                {{-- Category List
                 <div class="row">
                     @foreach ($category['descendants'] as $subCategory)
                         @if ($subCategory['parent_id'] == $category['id'])
@@ -55,7 +55,7 @@
                         </div>
                         @endif
                     @endforeach
-                </div>
+                </div>--}}
                 {{-- End Category List --}}
 
                 <div class="row">
@@ -76,26 +76,26 @@
                 </div>
 
                 {{-- Product List--}}
-                <search-listings :static-listings="{{ ($searchResults->count()) }}" :static-meta="{{ json_encode($searchMeta) }}" category="{{ $category['id'] }}" page="{{ $page }}" display="{{ $display }}" sortBy="{{ $sortBy }}">
+                <search-listings :static-listings="{{ count($searchResults['data']) }}" :static-meta="{{ json_encode($searchResults['meta']) }}" category="{{ $category['id'] }}" page="{{ $page }}" display="{{ $display }}" sortBy="{{ $sortBy }}">
 
                     {{-- Render snapshot here --}}
                     <template slot-scope="prop">
                         <div class="row" v-show="prop.show">
 
-                            @foreach ($searchResults as $product)
+                            @foreach ($searchResults['data'] as $product)
 
                             <div class="col-xs-12 col-md-6">
                                 <div class="element product-box listing">
                                     <div class="row">
                                         <div class="col-xs-5">
-                                            <a href="/product/{!! candyRoute($product) !!}" class="product-img">
-                                                <img src="{!! candyPrimaryThumbnail($product) !!}" alt="{!! candyAttribute($product, 'name') !!}">
+                                            <a href="/product/{{ candyRoute($product) }}" class="product-img">
+                                                <img src="{{ candyPrimaryThumbnail($product) }}" alt="{{ candyAttribute($product, 'name') }}">
                                             </a>
                                         </div>
                                         <div class="col-xs-7">
                                             <div class="product-details">
-                                                <a href="/product/{!! candyRoute($product) !!}" class="product-title">
-                                                    {!! candyAttribute($product, 'name') !!}
+                                                <a href="/product/{{ candyRoute($product) }}" class="product-title">
+                                                    {{ candyAttribute($product, 'name') }}
                                                 </a>
                                                 <search-add-to-basket :product="{{ json_encode($product) }}"></search-add-to-basket>
                                             </div>
@@ -136,6 +136,9 @@
 
     <add-to-basket-modal></add-to-basket-modal>
 
-
     @include('_partials.newsletter')
+@stop
+@section('bodyscript')
+    @parent
+
 @stop

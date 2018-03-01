@@ -10,7 +10,7 @@
                 <span class="vat">{{ vatLabel }}.<br>VAT</span>
             </div>
         </div>
-        <a :href="'/product/'+ candyRoute(product)" class="btn btn-grey add-to-basket_summary" v-if="productHasVariants || !productHasInventory">View Product</a>
+        <a :href="'/product/'+ candyRoute(product)" class="btn btn-grey add-to-basket_summary" v-if="productHasVariants || !productHasInventory">View Options</a>
         <a href="javascript:void(0)" class="btn btn-green add-to-basket_summary" @click="addToBasket(product)" v-if="!productHasVariants && productHasInventory">Add to Basket</a>
     </div>
 </template>
@@ -43,7 +43,10 @@
                 return false;
             },
             productHasInventory: function(data) {
-                return (this.product.variants.data[0].inventory > 0)
+                if (_.has(this.product, 'first_variant.data')) {
+                    return (this.product.first_variant.data.inventory > 0)
+                }
+                return false;
             }
         },
         methods: {
@@ -59,7 +62,7 @@
                 });
             },
             updateVariant: function() {
-                var defaultVariant = this.product.variants.data[0];
+                var defaultVariant = this.product.first_variant.data;
                 var _this = this;
 
                 if (defaultVariant.options.length == 0) {
@@ -68,7 +71,7 @@
                     $.each(defaultVariant.options, function(key, value) {
                         _this.selected[key] = value;
                     });
-                    this.$store.commit('setProductVariant', Candy.mapVariant(this.product.variants, this.selected));
+                    this.$store.commit('setProductVariant', Candy.mapVariant(this.product.first_variant, this.selected));
                 }
             },
             candyRoute: function(data) {

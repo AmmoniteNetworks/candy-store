@@ -7,6 +7,7 @@
 
 require('./bootstrap');
 var candy = require('./classes/Candy.js');
+var numeral = require("numeral");
 
 window.moment = require('moment');
 window.Candy = new candy();
@@ -18,6 +19,7 @@ window.currency = {
     code: document.head.querySelector('meta[name="currency-code"]').content,
     symbol: document.head.querySelector('meta[name="currency-symbol"]').content
 };
+
 
 import Vue from 'vue'
 import store from './store'
@@ -32,6 +34,7 @@ Vue.component('product-gallery', require('./components/products/gallery.vue'));
 Vue.component('product-variants', require('./components/products/variants.vue'));
 Vue.component('product-sku', require('./components/products/sku.vue'));
 Vue.component('product-stock', require('./components/products/stock.vue'));
+Vue.component('product-price-tiers', require('./components/products/price-tiers.vue'));
 
 Vue.component('vat-toggle', require('./components/vat-toggle.vue'));
 Vue.component('currency-select', require('./components/currency-select.vue'));
@@ -72,13 +75,20 @@ Vue.filter('capitalize', function (value) {
     if (!value) return '';
     value = value.toString()
     return value.charAt(0).toUpperCase() + value.slice(1)
-})
+});
 
 Vue.filter('currency', function (value) {
     if (!value) return currency.symbol + 0.00;
     value = Number(value);
-    return currency.symbol + value.toFixed(2);
-})
+    return currency.symbol + numeral(value).format("0,00.00");
+});
+
+Vue.filter("number_format", function (value, format) {
+    if (!format) {
+        format = "0,0";
+    }
+    return numeral(value).format(format);
+});
 
 const app = new Vue({
     el: '#app',

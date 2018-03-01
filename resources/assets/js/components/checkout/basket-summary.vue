@@ -15,7 +15,7 @@
                         Qty {{ line.quantity }}
                     </div>
                     <div class="cost">
-                        <div class="numeric numeric-lg">{{ (line.total * line.quantity) | currency  }}</div>
+                        <div class="numeric numeric-lg">{{ line.total | currency  }}</div>
                     </div>
                 </div>
             </div>
@@ -33,13 +33,16 @@
                     </div>
                 </div>
             </div>
-            <div class="total-promotion-discount" v-show="hasDiscount" v-for="discount in basketDiscounts.data">
-                <div class="col-xs-8 text-left">
-                    {{ candyAttribute(discount, 'name') }}
-                </div>
-                <div class="col-xs-4 text-right">
-                    <div v-for="reward in discount.rewards.data">
-                        {{ candyReward(reward) }}
+            <div class="total-promotion-discount" v-show="hasDiscount" v-for="discount in basketDiscounts.data" :key="discount.id">
+                <div class="row">
+                    <div class="col-xs-8 text-left">
+                        <strong>Discount Code: </strong>
+                        {{ candyAttribute(discount, 'name') }}
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <div v-for="reward in discount.rewards.data" :key="reward.id">
+                            {{ candyReward(reward) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,12 +100,21 @@
                 return this.$store.getters.orderTotal;
             },
             taxTotal() {
-                return this.$store.getters.orderTaxTotal;
+                return this.$store.getters.orderTax;
+            },
+            hasDiscount() {
+                return true;
             }
         },
         methods: {
             candyThumbnail: function(data) {
                 return Candy.thumbnail(data);
+            },
+            candyAttribute: function(data, attribute) {
+                return Candy.attribute(data, attribute);
+            },
+            candyReward: function(reward) {
+                return Candy.reward(reward);
             }
         }
     }

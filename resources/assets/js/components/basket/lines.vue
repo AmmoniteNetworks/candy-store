@@ -1,8 +1,7 @@
 <template>
     <div>
 
-        <div class="basket-lines" v-if="basketCount > 0">
-
+        <div class="basket-lines" v-if="basket.lines.length">
             <div class="row product-row" v-for="line in basket.lines" :key="line.id">
                 <div class="col-xs-12 col-sm-2 basket-img">
                     <img :src="thumbnail(line)" :alt="line.name">
@@ -13,7 +12,9 @@
                     <small v-for="(option,key) in line.variant.options" :key="key"><strong>{{ key | capitalize }}:</strong> {{ option.en }} </small>
                 </div>
                 <div class="col-xs-12 col-sm-2">
-                    <div class="numeric numeric-lg">{{ line.variant.price | currency }}</div>
+                    <div class="numeric numeric-lg">
+                        {{ linePrice(line)|currency }}
+                    </div>
                 </div>
                 <div class="col-xs-12 col-sm-2 quantity">
                     <label class="sr-only">Quantity</label>
@@ -55,6 +56,20 @@
             }
         },
         methods: {
+            linePrice(line) {
+                let tiers = line.variant.tiers.data;
+
+                if (tiers.length) {
+                    let prices = _.filter(tiers, tier => {
+                        return line.quantity >= tier.lower_limit;
+                    });
+                    prices = _.orderBy(prices, 'lower_limit', 'desc');
+                    if (prices[0]) {
+                        return prices[0].price;
+                    }
+                }
+                return line.variant.price;
+            },
             candyThumbnail: function(data) {
                 return Candy.thumbnail(data);
             },
@@ -67,16 +82,10 @@
                 return '/images/no-image.png';
             },
             updateBasket: function(data) {
-                return this.$store.dispatch('updateBasket')
-                    .then(response => {
-                        location.reload();
-                    });
+                return this.$store.dispatch('updateBasket');
             },
             emptyBasket: function(data) {
-                return this.$store.dispatch('emptyBasket')
-                    .then(response => {
-                        location.reload();
-                    });
+                return this.$store.dispatch('emptyBasket');
             },
             removeLine: function(line) {
                 return this.$store.dispatch('removeFromBasket', line);

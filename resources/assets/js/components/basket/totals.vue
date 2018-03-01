@@ -1,5 +1,5 @@
 <template>
-    <div class="row totals-area" v-if="basketCount > 0">
+    <div class="row totals-area" v-if="basket.lines.length">
         <div class="total-basket">
             <div class="col-xs-6">
                 Basket Total
@@ -8,11 +8,11 @@
                 <div class="numeric numeric-lg">{{ basketTotal | currency }}</div>
             </div>
         </div>
-        
+
         <div class="total-promotion-discount" v-show="hasDiscount">
             <hr>
 
-            <div v-for="discount in basketDiscounts.data" style="display:inline-block">
+            <div v-for="discount in basketDiscounts.data">
                 <div class="col-xs-8 text-left">
                     {{ candyAttribute(discount, 'name') }} - <a href="javascript:void(0);" class="text-danger" @click="removeDiscount(discount['id'])">Remove</a>
                 </div>
@@ -25,7 +25,7 @@
 
             <hr>
         </div>
-        
+
         <div class="total-vat">
             <div class="col-xs-6">
                 VAT Total

@@ -105,12 +105,11 @@
                                 <label>Country</label>
                                 <span class="custom-select full-width">
                                     <select class="form-control custom-dropdown" v-model="billingAddress.country" required>
-                                        <optgroup label="Popular Countries">
-                                            <option value="United Kingdom">United Kingdom</option>
-                                            <option value="France">France</option>
+                                        <optgroup label="Popular Countries" value="Popular Countries">
+                                            <option :value="country" v-for="country in popularCountries">{{ country }}</option>
                                         </optgroup>
-                                        <optgroup :label="region.region" v-for="region in regions" :key="region.region" v-if="region.region == 'Europe'">
-                                            <option :value="country.name.en" v-for="country in region.countries.data" :key="country.id">
+                                        <optgroup :label="region.region" v-for="region in regions" :key="region.region" v-if="region.region == 'Europe'" value="Europe">
+                                            <option :value="country.name.en" v-for="country in countries(region)" :key="country.id">
                                                 {{ country.name.en }}
                                             </option>
                                         </optgroup>
@@ -132,7 +131,6 @@
                 </form>
             </transition>
             <!-- END -->
-
             <transition name="fade-in">
                 <div v-show="paymentPanel.status == 'edit'" style="padding-top:50px;">
 
@@ -143,26 +141,57 @@
                         </div>
                     </transition>
 
-                    <transition name="fade-in">
-                        <div class="alert alert-danger" role="alert" v-show="paymentStatus == 'declined'">
-                            <i class="fa fa-exclamation-circle"></i>
-                            <strong>Declined</strong> sorry your card seems to have been declined, please try another card.
+                    <template v-if="hasType('offline')">
+                        <button class="btn btn-sm btn-primary" @click="payOnAccount()">Pay on account</button>
+                        <button class="btn btn-sm btn-green" @click="payNow()" >Pay now</button>
+                        <hr>
+                    </template>
+
+                    <div :class="{'hidden' : onAccount || hasType('offline') && !chosen}">
+                        <transition name="fade-in">
+                            <div class="alert alert-danger" role="alert" v-show="paymentStatus == 'declined'">
+                                <i class="fa fa-exclamation-circle"></i>
+                                <strong>Declined</strong> sorry your card seems to have been declined, please try another card.
+                            </div>
+                        </transition>
+
+                        <transition name="fade-in">
+                            <div class="alert alert-danger" role="alert" v-show="paymentStatus == 'missing_payment_method'">
+                                <i class="fa fa-exclamation-circle"></i>
+                                <strong>Error</strong> Please ensure you have correctly entered your payment details.
+                            </div>
+                        </transition>
+
+                        <transition name="fade-in">
+                            <div class="alert text-center" v-show="isProccessing">
+                                <i class="fas fa-spinner fa-spin fa-3x"></i><br><br>
+                                <strong>Please Wait</strong> proccessing your card details
+                            </div>
+                        </transition>
+                        <div v-show="!isProccessing" id="paypal-container" @click="paymentStatus = ''"></div>
+                        <div v-show="!isProccessing" id="dropin-container" @click="paymentStatus = ''"></div>
+
+                        <hr>
+
+                        <div class="clearfix">
+                            <button v-show="!isProccessing" @click="submitPaymentForm" id="submit-button" class="btn btn-green pull-right">Place your order securely</button>
                         </div>
-                    </transition>
-
-                    <transition name="fade-in">
-                        <div class="alert text-center" v-show="isProccessing">
-                            <i class="fa fa-spinner fa-spin fa-3x"></i><br><br>
-                            <strong>Please Wait</strong> proccessing your card details
+                        <div id="nonce"></div>
+                    </div>
+                    <div :class="{'hidden' : !onAccount}" v-if="hasType('offline')">
+                        <div class="alert alert-info">
+                            <p>You have chosen to pay on account, an invoice will be generated and sent to you.</p>
                         </div>
-                    </transition>
-
-                    <div v-show="!isProccessing" id="paypal-container" @click="paymentStatus = ''"></div>
-                    <div v-show="!isProccessing" id="dropin-container" @click="paymentStatus = ''"></div>
-
-                    <button v-show="!isProccessing" @click="submitPaymentForm" id="submit-button" class="btn btn-green pull-righ">Place your order securely</button>
-                    <hr>
-                    <div id="nonce"></div>
+                        <transition name="fade-in">
+                            <div class="alert alert-danger" role="alert" v-show="paymentStatus == 'error'">
+                                <i class="fa fa-exclamation-circle"></i>
+                                <strong>Error</strong> We are unable to process your order on account.
+                            </div>
+                        </transition>
+                        <div class="clearfix">
+                            <button @click="submitOnAccount" id="submit-button" class="btn btn-green pull-right" :disabled="isProccessing">Place your order securely</button>
+                        </div>
+                    </div>
 
                 </div>
             </transition>
@@ -195,7 +224,13 @@
                 paymentTotal: 0,
                 errors: {},
                 paymentStatus: '',
-                isProccessing: false
+                isProccessing: false,
+                braintreeDropin: null,
+                chosen: false,
+                onAccount: false,
+                popularCountries: [
+                    'United Kingdom'
+                ]
             }
         },
         watch: {
@@ -211,6 +246,9 @@
             }
         },
         computed: {
+            paymentTypes() {
+                return this.$store.state.checkout.paymentTypes;
+            },
             billingPanel() {
                 return this.$store.state.checkout.panel.billingAddress;
             },
@@ -244,43 +282,92 @@
             this.oldBillingAddress = this.billingAddress;
             // this.buildForm();
             this.$store.dispatch('orderPrefill', {'panel': 'billingAddress', 'data': this.prefill['billing']});
+            this.$store.dispatch('getPaymentTypes');
+
             this.$store.commit('setVatNo', this.prefill['vat_no']);
             this.$store.commit('setOrderTotal', this.prefill['total']);
             this.$store.commit('setOrderTax', this.prefill['vat']);
         },
         methods: {
+            hasType(type) {
+                return this.getPaymentType(type);
+            },
+            countries(region) {
+                return _.filter(region.countries.data, item => {
+                    return !(this.popularCountries.indexOf(item.name.en) >= 0);
+                });
+            },
+            getPaymentType(type) {
+                let item = _.find(this.paymentTypes.data, item => {
+                    return item.driver == type;
+                });
+                return item;
+            },
+            payOnAccount() {
+                this.onAccount = true;
+                this.chosen = true;
+            },
+            payNow() {
+                this.chosen = true;
+                this.onAccount = false;
+            },
+            submitOnAccount() {
+                let type = this.getPaymentType('offline');
+
+                this.paymentStatus = '';
+                this.isProccessing = true;
+
+                this.$store.dispatch('postPaymentDetails', {
+                    type: type.id
+                }).then(response => {
+                    window.location.replace("/checkout/confirmation");
+                }).catch(error => {
+                    this.paymentStatus = 'error';
+                    this.isProccessing = false;
+                });
+            },
             buildForm(price) {
+
+                if (this.braintreeDropin) {
+                    this.braintreeDropin.teardown();
+                    CandyEvent.$off('submitPayment');
+                }
+
                 braintree.dropin.create({
                     authorization: this.auth,
                     container: '#dropin-container',
                     paypal: {
                         container: 'paypal-container',
+                        singleUse: true,
                         flow: 'checkout',
                         amount: price, // Required
                         currency: 'GBP', // Required
+                        headless: true
                     }
                 }, (ce, i) => {
 
-                    var instance = i;
+                    this.braintreeDropin = i;
                     var createErr = ce;
                     var _this = this;
 
                     CandyEvent.$on('submitPayment', function() {
-
-                        instance.requestPaymentMethod(function (err, payload) {
-
-                            _this.$store.dispatch('postPaymentDetails', payload.nonce)
-                                .then(response => {
+                        _this.braintreeDropin.requestPaymentMethod(function (err, payload) {
+                            if (payload) {
+                                _this.isProccessing = true;
+                                _this.$store.dispatch('postPaymentDetails', {
+                                    token: payload.nonce
+                                }).then(response => {
                                     window.location.replace("/checkout/confirmation");
                                 })
                                 .catch(error => {
                                     _this.paymentStatus = 'declined';
                                     _this.isProccessing = false;
                                 });
-
+                            } else {
+                                _this.paymentStatus = 'missing_payment_method';
+                            }
                         });
                     });
-
                 });
             },
             setPanelStatus(value) {
@@ -291,7 +378,7 @@
                 this.$store.dispatch('postBillingAddress')
                 .then(response => {
                     this.$store.commit('setOrderTotal', response.data.order.total);
-                    this.$store.commit('setOrderTax', response.data.order.tax);
+                    this.$store.commit('setOrderTax', response.data.order.vat);
                     this.$store.commit('setPanelStatus', {'key':'billingAddress', 'value':'view'});
                     this.$store.commit('setPanelStatus', {'key':'paymentDetails', 'value':'edit'});
                 })
@@ -301,7 +388,6 @@
             },
             submitPaymentForm() {
                 this.paymentStatus = '';
-                this.isProccessing = true;
                 CandyEvent.$emit('submitPayment');
             }
         }

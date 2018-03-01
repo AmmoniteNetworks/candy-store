@@ -11,7 +11,6 @@
         <button type="button" :class="[{'disabled' : !nextIsActive, 'btn-light-blue' : nextIsActive}, 'btn btn-sm']" @click="goToNextPage">
             <i class="fa fa-angle-right" aria-hidden="true" ></i>
         </button>
-        
     </div>
 
 </template>

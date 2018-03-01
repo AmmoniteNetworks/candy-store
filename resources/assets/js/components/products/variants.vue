@@ -1,7 +1,6 @@
 <template>
     <div class="variations">
         <div class="form-group">
-
             <label v-for="(optionData, optionDataName) in options" :key="optionDataName" style="display:block;">
                 <span class="list-label">{{ optionData.label.en }}</span>
                 <span class="custom-select">
@@ -12,7 +11,6 @@
                     </select>
                 </span>
             </label>
-
         </div>
     </div>
 </template>

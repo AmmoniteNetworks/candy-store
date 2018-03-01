@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="text-right">
-            <button class="btn btn-lg btn-green" v-if="basketCount > 0" @click="proceed">Proceed to Checkout</button>
+            <button class="btn btn-lg btn-green" v-if="basket.lines.length" @click="proceed">Proceed to Checkout</button>
         </div>
     </div>
 </template>
@@ -17,6 +17,9 @@
         computed: {
             basketCount() {
                 return this.$store.getters.basketCount;
+            },
+            basket() {
+                return this.$store.state.basket;
             }
         },
         methods: {
