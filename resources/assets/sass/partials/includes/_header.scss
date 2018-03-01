@@ -236,6 +236,18 @@
           background-color: white;
           transition: visibility 0s ease 0.2s, opacity .2s ease 0s, top .2s ease 0s;
 
+          .btn.btn-purple {
+            color: white!important;
+            background-color: #9e1667;
+            background: #9e1667;
+            background: -webkit-gradient(linear, left top, left bottom, from(#ac1c73), to(#9e1667));
+            background: linear-gradient(to bottom, #ac1c73 0%, #9e1667 100%);
+            border-color: #2d071e;
+            text-shadow: 0px 0px 5px #2d071e;
+            -webkit-box-shadow: 0px 0px 0px 0px #2d071e;
+            box-shadow: 0px 0px 0px 0px #2d071e;
+          }
+
           &.active {
             opacity: 1;
             visibility: visible;

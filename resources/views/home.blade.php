@@ -14,7 +14,7 @@
                     <div class="element promo-box video" style="background-image: url('/images/getcandy/promotions/video.jpg')">
                         <div class="center">
                             <lightbox href="https://www.youtube.com/watch?v=nkAWMtW1VT4&t=6s" classes="btn btn-green">
-                                <img src="/images//icons/play.svg" alt="play video">
+                                <img src="/images/icons/play.svg" alt="play video">
                             </lightbox>
                             <h3>Introducing Sweets!</h3>
                             <p>It's all about Get Candy</p>
@@ -99,11 +99,7 @@
                                 <small>on all <br>orders over</small>
                             </h3>
                             <span class="price">
-                            @if(userHasRole('trade'))
-                                <small>{!! $currency['symbol'] !!}</small>{!! priceConverter(300) !!}
-                            @else
                                 <small>{!! $currency['symbol'] !!}</small>{!! priceConverter(50) !!}
-                            @endif
                             </span>
                         </a>
                     </div>
